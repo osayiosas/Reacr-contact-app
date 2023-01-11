@@ -1,47 +1,45 @@
-import React from "react";
-
+import React, { useState, useEffect } from "react";
+import { uuidv4 } from 'uuid';
 import './App.css';
-
 import Header from "./Header";
-
 import Addcontact from "./Addcontact";
-
 import Contactlsit from "./contactlsit";
 
 
 
 function App()
 {
+  const LOCAL_STORAGE_KEY = "contacts"
+  const [contacts, setContacts] = useState([]);
+
+  const addContactHandler = (contact) =>
+  {
+    console.log(contact);
+    setContacts([...contacts, { id: uuidv4(), ...contacts }]);
+  };
+
+
+
+  useEffect(() =>
+  { 
+    const retriveContacts = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+    if(retriveContacts) setContacts(retriveContacts);
+  }, []);
+
   
-  const contacts = [
-    {
-      id: "1",
-      name: "Osayi",
-      email: "idiagheosaigbovoosas@gmail.com"
-    },
+  useEffect(() =>
+  { 
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(contacts));
+  }, [contacts]);
 
-    {
-      id: "2",
-      name: "joan",
-      email: "joan@gmail.com"
-    },
-
-
-    {
-      id: "3",
-      name: "inki",
-      email: "ink.com"
-    },
-  ];
-  
   return (
     <div className="ui container">
       <Header />
-      <Addcontact  />
-      <Contactlsit  contacts = {contacts} />
+      <Addcontact addContactHandler={addContactHandler} />
+      <Contactlsit contacts={contacts} />
 
     </div>
-  )
+  );
 }
 
 export default App;
